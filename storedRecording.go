@@ -22,6 +22,8 @@ type StoredRecording interface {
 
 	// Delete deletes the recording
 	Delete(key *Key) error
+
+	Download(key *Key) ([]byte, error)
 }
 
 // StoredRecordingData is the data for a stored recording
@@ -95,4 +97,8 @@ func (s *StoredRecordingHandle) Copy(dest string) (*StoredRecordingHandle, error
 // Delete deletes the recording
 func (s *StoredRecordingHandle) Delete() error {
 	return s.s.Delete(s.key)
+}
+
+func (s *StoredRecordingHandle) Download() ([]byte, error) {
+	return s.s.Download(s.key)
 }

@@ -128,7 +128,13 @@ func (c *Client) makeRequest(method, url string, resp interface{}, req interface
 	defer ret.Body.Close() //nolint:errcheck
 
 	if resp != nil {
-		err = json.NewDecoder(ret.Body).Decode(resp)
+		switch resp.(type) {
+		case *[]byte:
+			respP := resp.(*[]byte)
+			*respP, err = io.ReadAll(ret.Body)
+		default:
+			err = json.NewDecoder(ret.Body).Decode(resp)
+		}
 		if err != nil {
 			return eris.Wrap(err, "failed to decode response")
 		}

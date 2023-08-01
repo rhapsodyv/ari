@@ -90,3 +90,17 @@ func (sr *StoredRecording) StageCopy(key *ari.Key, dest string) (*ari.StoredReco
 func (sr *StoredRecording) Delete(key *ari.Key) error {
 	return sr.client.del("/recordings/stored/"+key.ID, nil, "")
 }
+
+// StageCopy creates a `StoredRecordingHandle` with a `Copy` operation staged.
+func (sr *StoredRecording) Download(key *ari.Key) ([]byte, error) {
+	if key == nil || key.ID == "" {
+		return nil, errors.New("storedRecording key not supplied")
+	}
+
+	var data []byte
+	if err := sr.client.get("/recordings/stored/"+key.ID+"/file", &data); err != nil {
+		return nil, dataGetError(err, "storedRecording", "%v", key.ID)
+	}
+
+	return data, nil
+}
